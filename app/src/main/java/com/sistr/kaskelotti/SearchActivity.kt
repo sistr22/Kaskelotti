@@ -44,11 +44,23 @@ class SearchActivity : AppCompatActivity() {
                 null
             )
 
-            for(i in 0 until cursor.columnCount)
+            for(i in 0 until cursor!!.columnCount)
             {
                 Log.d(TAG, "column [$i]: ${cursor.getColumnName(i)}")
             }
-
+            cursor.moveToFirst()
+            if(cursor.getInt(2) == 0 ) // 0 is for verbs
+            {
+                val fragmentManager = supportFragmentManager
+                val fragmentTransaction = fragmentManager.beginTransaction()
+                val fragment = VerbFragment()
+                val fragmentArgs = Bundle()
+                fragmentArgs.putInt("_id", cursor.getInt(0))
+                fragment.arguments = fragmentArgs
+                fragmentTransaction.replace(R.id.fragment_container, fragment)
+                fragmentTransaction.commit()
+            }
+            cursor.close()
         } else if (Intent.ACTION_SEARCH == intent.action) {
             Log.d(TAG, "ACTION_SEARCH intent")
             setIntent(intent)

@@ -15,6 +15,7 @@ private val sUriMatcher = UriMatcher(UriMatcher.NO_MATCH).apply {
     addURI("com.sistr.kaskelotti.provider", "search", 0)
     addURI("com.sistr.kaskelotti.provider", SearchManager.SUGGEST_URI_PATH_QUERY + "/*", 1)
     addURI("com.sistr.kaskelotti.provider", "search/#", 2)
+    addURI("com.sistr.kaskelotti.provider", "verbs/#", 3)
 }
 
 class SearchProvider : ContentProvider() {
@@ -59,7 +60,10 @@ class SearchProvider : ContentProvider() {
                 //return db.rawQuery("SELECT * FROM searchtable_fts WHERE searchtable_fts MATCH '${uri?.lastPathSegment}*';", null)
             }
             2 -> {  // If the incoming URI was for a single row
-                return db.rawQuery("SELECT * FROM searchtable WHERE _ID = ${uri?.lastPathSegment};", null)
+                return db.rawQuery("SELECT * FROM searchtable WHERE _id = ${uri?.lastPathSegment};", null)
+            }
+            3 -> {  // If the incoming URI was for a single row
+                return db.rawQuery("SELECT * FROM verbs_infinitive INNER JOIN verbs_present ON verbs_infinitive._id = verbs_present._id WHERE verbs_infinitive._id = ${uri?.lastPathSegment};", null)
             }
             else -> { // If the URI is not recognized
                 return null
@@ -90,7 +94,7 @@ class SearchProvider : ContentProvider() {
                 return null
             }
             1 -> {
-                return SearchManager.SUGGEST_MIME_TYPE;
+                return SearchManager.SUGGEST_MIME_TYPE
             }
             2 -> {
                 return null

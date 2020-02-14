@@ -1,9 +1,28 @@
 package com.sistr.kaskelotti
 
-class Verb(verbPerusmoto: String) {
-    val perusmoto = verbPerusmoto
-    var verbitipi = -1
+import android.database.Cursor
+import java.util.*
+
+enum class Tense {
+    PRESENT,
+    IMPERFECT
+}
+
+class Verb(cursor: Cursor) {
+    val aInfinitiivi = "olla"
+    val vartalo = Pair("ole", false)
+    val verbitipi = 3
+    val tenses: EnumMap<Tense, Array<Pair<String, Boolean>>>
+
     init {
-        this.verbitipi = 0
+        tenses = EnumMap(Tense::class.java)
+        tenses[Tense.PRESENT] = arrayOf(
+            Pair("olen", false),
+            Pair("olet", false),
+            Pair("on", true),
+            Pair("olemme", false),
+            Pair("olette", false),
+            Pair("olevat", true)
+        )
     }
 }
