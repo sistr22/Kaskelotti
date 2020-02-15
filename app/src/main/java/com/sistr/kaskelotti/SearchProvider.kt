@@ -23,13 +23,14 @@ class SearchProvider : ContentProvider() {
     private lateinit var db: SQLiteDatabase
 
     override fun onCreate(): Boolean {
-        val dbHelper = DbHelper(context)
+        val dbHelper = DbHelper(context!!)
         db = dbHelper.readableDatabase
         return true
     }
 
+
     override fun query(
-        uri: Uri?,
+        uri: Uri,
         projection: Array<out String>?,
         selection: String?,
         selectionArgs: Array<out String>?,
@@ -63,7 +64,7 @@ class SearchProvider : ContentProvider() {
                 return db.rawQuery("SELECT * FROM searchtable WHERE _id = ${uri?.lastPathSegment};", null)
             }
             3 -> {  // If the incoming URI was for a single row
-                return db.rawQuery("SELECT * FROM verbs_infinitive INNER JOIN verbs_present ON verbs_infinitive._id = verbs_present._id WHERE verbs_infinitive._id = ${uri?.lastPathSegment};", null)
+                return db.rawQuery("SELECT * FROM verbs_infinitive LEFT JOIN verbs_present ON verbs_infinitive._id = verbs_present._id WHERE verbs_infinitive._id = ${uri?.lastPathSegment};", null)
             }
             else -> { // If the URI is not recognized
                 return null
