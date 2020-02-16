@@ -74,10 +74,10 @@ class VerbFragment : Fragment() {
     }
 
     private inner class ScreenSlidePagerAdapter(fa: Fragment) : FragmentStateAdapter(fa) {
-        override fun getItemCount(): Int = 2
+        override fun getItemCount(): Int = 1
 
         override fun createFragment(position: Int): Fragment {
-            return PresentFragment()
+            return PresentFragment(_verb)
         }
     }
 }

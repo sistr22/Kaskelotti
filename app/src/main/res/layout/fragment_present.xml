@@ -9,7 +9,7 @@
         android:id="@+id/table_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/colorPrimary"
+        android:background="?attr/colorBackgroundFloating"
         android:gravity="center_horizontal|top">
 
         <TableRow
@@ -22,13 +22,13 @@
                 android:layout_height="wrap_content"
                 android:paddingHorizontal="7dp"
                 android:text="@string/tense_fragment_vartalo"
-                android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+                android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
             <TextView
                 android:id="@+id/text_view_vartalo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
                 tools:text="ole" />
         </TableRow>
 
@@ -40,12 +40,16 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/mina" />
+                android:text="@string/mina"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                android:textColor="?attr/editTextColor" />
 
             <TextView
                 android:id="@+id/text_view_mina"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                android:textColor="?attr/editTextColor"
                 tools:text="olen" />
         </TableRow>
 
@@ -57,12 +61,14 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/sina" />
+                android:text="@string/sina"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
             <TextView
                 android:id="@+id/text_view_sina"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
                 tools:text="olet" />
         </TableRow>
 
@@ -74,12 +80,16 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/han" />
+                android:text="@string/han"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                android:textColor="?attr/editTextColor" />
 
             <TextView
                 android:id="@+id/text_view_han"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                android:textColor="?attr/editTextColor"
                 tools:text="on" />
         </TableRow>
 
@@ -91,12 +101,16 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/me" />
+                android:text="@string/me"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                android:textColor="?attr/editTextColor" />
 
             <TextView
                 android:id="@+id/text_view_me"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                android:textColor="?attr/editTextColor"
                 tools:text="olemme" />
         </TableRow>
 
@@ -108,12 +122,16 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/te" />
+                android:text="@string/te"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                android:textColor="?attr/editTextColor" />
 
             <TextView
                 android:id="@+id/text_view_te"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                android:textColor="?attr/editTextColor"
                 tools:text="olette" />
         </TableRow>
 
@@ -125,12 +143,16 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/he" />
+                android:text="@string/he"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                android:textColor="?attr/editTextColor" />
 
             <TextView
                 android:id="@+id/text_view_he"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                android:textColor="?attr/editTextColor"
                 tools:text="ovat" />
         </TableRow>
 
