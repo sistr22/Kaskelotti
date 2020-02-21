@@ -129,4 +129,31 @@ class VerbKtTest {
             assert(tmp.compareTo(expectedResults[i]) == 0) { "Expected: ${expectedResults[i]} received: $tmp" }
         }
     }
+
+    @Test
+    fun verbOlla() {
+        val mockedCursor = MatrixCursor(arrayOf("_id", "tyypi", "a_infinitiivi", "vartalo", "_id", "mina", "sina", "han", "me", "te", "he"))
+        mockedCursor.addRow(arrayOf("0", "3", "olla", null, 0, null, null, "on", null, null, "ovat"))
+
+        val verb = Verb(mockedCursor)
+        val expectedResults = arrayOf("olen", "olet", "on", "olemme", "olette", "ovat")
+        for(i in expectedResults.indices) {
+            val tmp = verb.tenses[Tense.PRESENT]!![i].first.toString()
+            assert(tmp.compareTo(expectedResults[i]) == 0) { "Expected: ${expectedResults[i]} received: $tmp" }
+        }
+    }
+
+    @Test
+    fun verbTehda() {
+        val mockedCursor = MatrixCursor(arrayOf("_id", "tyypi", "a_infinitiivi", "vartalo", "_id", "mina", "sina", "han", "me", "te", "he"))
+        mockedCursor.addRow(arrayOf("0", "2", "tehdä", null, 0, "teen", "teet", "tekee", "teemme", "teette", "tekevät"))
+
+        val verb = Verb(mockedCursor)
+        val expectedResults = arrayOf("teen", "teet", "tekee", "teemme", "teette", "tekevät")
+        for(i in expectedResults.indices) {
+            val tmp = verb.tenses[Tense.PRESENT]!![i].first.toString()
+            assert(tmp.compareTo(expectedResults[i]) == 0) { "Expected: ${expectedResults[i]} received: $tmp" }
+        }
+    }
+
 }
