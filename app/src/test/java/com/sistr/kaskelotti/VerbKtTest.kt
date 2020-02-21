@@ -1,10 +1,15 @@
 package com.sistr.kaskelotti
 
+import android.database.MatrixCursor
+import android.os.Build
 import org.junit.Test
 
-import org.junit.Assert.*
-import java.util.*
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
 
+@RunWith(RobolectricTestRunner::class)
+@Config(sdk = [Build.VERSION_CODES.O_MR1])
 class VerbKtTest {
 
     @Test
@@ -44,8 +49,6 @@ class VerbKtTest {
                 assert(res[i].contentEquals(expectedResults[wordIdx][i])) {"Expected these syllables: ${expectedResults[wordIdx].contentToString()} but result is: $res"}
             }
         }
-
-        assertEquals(4, 2 + 2)
     }
 
     @Test
@@ -59,6 +62,19 @@ class VerbKtTest {
         for(idx in testWords.indices) {
             val res = applyKPT(testWords[idx])
             assert(res.contentEquals(expectedResults[idx])) {"Expected: ${expectedResults[idx]} received: $res"}
+        }
+    }
+
+    @Test
+    fun instanciateVerbNoException() {
+        val mockedCursor = MatrixCursor(arrayOf("_id", "tyypi", "a_infinitiivi", "vartalo", "_id", "mina", "sina", "han", "me", "te", "he"))
+        mockedCursor.addRow(arrayOf("0", "1", "puhua", null, 0, null, null, null, null, null, null))
+
+        val puhua = Verb(mockedCursor)
+        val expectedResults = arrayOf("puhun", "puhut", "puhuu", "puhumme", "puhutte", "puhuvat")
+        for(i in expectedResults.indices) {
+            val tmp = puhua.tenses[Tense.PRESENT]!![i].first.toString()
+            assert(tmp.compareTo(expectedResults[i]) == 0) { "Expected: ${expectedResults[i]} received: $tmp" }
         }
 
     }
