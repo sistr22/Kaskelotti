@@ -368,7 +368,13 @@ class Conjugator(verb: Verb) {
 
                     }
                     Pronoun.HAN -> {
-                        val stringBuilder = SpannableStringBuilder(_verb.vartalo.toString().plus( _verb.vartalo.last()))
+                        val vartalo = _verb.vartalo.toString()
+                        var stringBuilder: SpannableStringBuilder
+                        if(vartalo[vartalo.lastIndex] == vartalo[vartalo.lastIndex-1]) {
+                            stringBuilder = SpannableStringBuilder(vartalo)
+                        } else {
+                            stringBuilder = SpannableStringBuilder(_verb.vartalo.toString().plus( _verb.vartalo.last()))
+                        }
                         stringBuilder.setSpan(
                             StyleSpan(BOLD),
                             stringBuilder.length-1, stringBuilder.length,
