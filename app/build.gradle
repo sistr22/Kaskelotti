@@ -4,6 +4,7 @@ apply plugin: 'kotlin-android-extensions'
 
 android {
     compileSdkVersion 29
+    testOptions.unitTests.includeAndroidResources = true
     buildToolsVersion "29.0.3"
     defaultConfig {
         applicationId "com.sistr.kaskelotti"
