@@ -124,24 +124,43 @@ fun divideInSyllables(word: String): MutableList<String> {
     return result
 }
 
-fun applyKPT(word: String): String {
+fun applyKPT(word: String, vahva: Boolean): String {
     val syllables = divideInSyllables(word)
-    val index = kpt_vahva.indexOfFirst { it == "${syllables[syllables.lastIndex-1].last()}${syllables.last()[0]}" }
-    if(index != -1) {
-        if(kpt_heikko[index].length == 2) {
+    if(syllables.size <= 1)
+        return word;
+    if(vahva) {
+        val index = kpt_heikko.indexOfFirst { it == "${syllables[syllables.lastIndex-1].last()}${syllables.last()[0]}" }
+        if(index != -1) {
             syllables[syllables.lastIndex-1] = syllables[syllables.lastIndex-1].dropLast(1) + kpt_heikko[index][0]
             syllables[syllables.lastIndex] = kpt_heikko[index][1] + syllables[syllables.lastIndex].removeRange(0, 1)
-        } else if(kpt_heikko[index].length == 1) {
-            syllables[syllables.lastIndex-1] = syllables[syllables.lastIndex-1].dropLast(1)
-            syllables[syllables.lastIndex] = kpt_heikko[index][0] + syllables[syllables.lastIndex].removeRange(0, 1)
+        } else {
+            val idx = kpt_heikko.indexOfFirst { it == "${syllables.last()[0]}" }
+            if(idx != -1) {
+                if(kpt_vahva[idx].length == 2) {
+                    syllables[syllables.lastIndex-1] = syllables[syllables.lastIndex-1].dropLast(1) + kpt_vahva[idx][0]
+                    syllables[syllables.lastIndex] = kpt_vahva[idx][1] + syllables[syllables.lastIndex].removeRange(0, 1)
+                } else {
+                    syllables[syllables.lastIndex] = kpt_vahva[idx] + syllables[syllables.lastIndex].removeRange(0, 1)
+                }
+            }
         }
     } else {
-        val idx = kpt_vahva.indexOfFirst { it == "${syllables.last()[0]}" }
-        if(idx != -1) {
-            syllables[syllables.lastIndex] = kpt_heikko[idx] + syllables[syllables.lastIndex].removeRange(0, 1)
+        val index = kpt_vahva.indexOfFirst { it == "${syllables[syllables.lastIndex-1].last()}${syllables.last()[0]}" }
+        if(index != -1) {
+            if(kpt_heikko[index].length == 2) {
+                syllables[syllables.lastIndex-1] = syllables[syllables.lastIndex-1].dropLast(1) + kpt_heikko[index][0]
+                syllables[syllables.lastIndex] = kpt_heikko[index][1] + syllables[syllables.lastIndex].removeRange(0, 1)
+            } else if(kpt_heikko[index].length == 1) {
+                syllables[syllables.lastIndex-1] = syllables[syllables.lastIndex-1].dropLast(1)
+                syllables[syllables.lastIndex] = kpt_heikko[index][0] + syllables[syllables.lastIndex].removeRange(0, 1)
+            }
+        } else {
+            val idx = kpt_vahva.indexOfFirst { it == "${syllables.last()[0]}" }
+            if(idx != -1) {
+                syllables[syllables.lastIndex] = kpt_heikko[idx] + syllables[syllables.lastIndex].removeRange(0, 1)
+            }
         }
     }
-
 
     return syllables.joinToString("")
 }
@@ -189,7 +208,7 @@ class Conjugator(verb: Verb) {
             1 -> {
                 return when(pronoun) {
                     Pronoun.MINA -> {
-                        val stringBuilder = SpannableStringBuilder(applyKPT(_verb.vartalo.toString()).plus('n'))
+                        val stringBuilder = SpannableStringBuilder(_verb.vartalo_heikko.toString().plus('n'))
                         stringBuilder.setSpan(
                             StyleSpan(BOLD),
                             stringBuilder.length-1, stringBuilder.length,
@@ -198,7 +217,7 @@ class Conjugator(verb: Verb) {
 
                     }
                     Pronoun.SINA -> {
-                        val stringBuilder = SpannableStringBuilder(applyKPT(_verb.vartalo.toString()).plus('t'))
+                        val stringBuilder = SpannableStringBuilder(_verb.vartalo_heikko.toString().plus('t'))
                         stringBuilder.setSpan(
                             StyleSpan(BOLD),
                             stringBuilder.length-1, stringBuilder.length,
@@ -207,7 +226,7 @@ class Conjugator(verb: Verb) {
 
                     }
                     Pronoun.HAN -> {
-                        val stringBuilder = SpannableStringBuilder(_verb.vartalo.toString().plus(_verb.vartalo.last()))
+                        val stringBuilder = SpannableStringBuilder(_verb.vartalo_vahva.toString().plus(_verb.vartalo_heikko.last()))
                         stringBuilder.setSpan(
                             StyleSpan(BOLD),
                             stringBuilder.length-1, stringBuilder.length,
@@ -216,7 +235,7 @@ class Conjugator(verb: Verb) {
 
                     }
                     Pronoun.ME -> {
-                        val stringBuilder = SpannableStringBuilder(applyKPT(_verb.vartalo.toString()).plus("mme"))
+                        val stringBuilder = SpannableStringBuilder(_verb.vartalo_heikko.toString().plus("mme"))
                         stringBuilder.setSpan(
                             StyleSpan(BOLD),
                             stringBuilder.length-3, stringBuilder.length,
@@ -224,7 +243,7 @@ class Conjugator(verb: Verb) {
                         stringBuilder
                     }
                     Pronoun.TE -> {
-                        val stringBuilder = SpannableStringBuilder(applyKPT(_verb.vartalo.toString()).plus("tte"))
+                        val stringBuilder = SpannableStringBuilder(_verb.vartalo_heikko.toString().plus("tte"))
                         stringBuilder.setSpan(
                             StyleSpan(BOLD),
                             stringBuilder.length-3, stringBuilder.length,
@@ -232,7 +251,7 @@ class Conjugator(verb: Verb) {
                         stringBuilder
                     }
                     Pronoun.HE -> {
-                        val stringBuilder = SpannableStringBuilder(_verb.vartalo.toString().plus(if(_verb.usePilkut()) "vät" else "vat"))
+                        val stringBuilder = SpannableStringBuilder(_verb.vartalo_vahva.toString().plus(if(_verb.usePilkut()) "vät" else "vat"))
                         stringBuilder.setSpan(
                             StyleSpan(BOLD),
                             stringBuilder.length-3, stringBuilder.length,
@@ -244,7 +263,7 @@ class Conjugator(verb: Verb) {
             2 -> {
                 return when(pronoun) {
                     Pronoun.MINA -> {
-                        val stringBuilder = SpannableStringBuilder(_verb.vartalo.toString().plus('n'))
+                        val stringBuilder = SpannableStringBuilder(_verb.vartalo_heikko.toString().plus('n'))
                         stringBuilder.setSpan(
                             StyleSpan(BOLD),
                             stringBuilder.length-1, stringBuilder.length,
@@ -253,7 +272,7 @@ class Conjugator(verb: Verb) {
 
                     }
                     Pronoun.SINA -> {
-                        val stringBuilder = SpannableStringBuilder(_verb.vartalo.toString().plus('t'))
+                        val stringBuilder = SpannableStringBuilder(_verb.vartalo_heikko.toString().plus('t'))
                         stringBuilder.setSpan(
                             StyleSpan(BOLD),
                             stringBuilder.length-1, stringBuilder.length,
@@ -262,12 +281,12 @@ class Conjugator(verb: Verb) {
 
                     }
                     Pronoun.HAN -> {
-                        val stringBuilder = SpannableStringBuilder(_verb.vartalo.toString())
+                        val stringBuilder = SpannableStringBuilder(_verb.vartalo_heikko.toString())
                         stringBuilder
 
                     }
                     Pronoun.ME -> {
-                        val stringBuilder = SpannableStringBuilder(_verb.vartalo.toString().plus("mme"))
+                        val stringBuilder = SpannableStringBuilder(_verb.vartalo_heikko.toString().plus("mme"))
                         stringBuilder.setSpan(
                             StyleSpan(BOLD),
                             stringBuilder.length-3, stringBuilder.length,
@@ -275,7 +294,7 @@ class Conjugator(verb: Verb) {
                         stringBuilder
                     }
                     Pronoun.TE -> {
-                        val stringBuilder = SpannableStringBuilder(_verb.vartalo.toString().plus("tte"))
+                        val stringBuilder = SpannableStringBuilder(_verb.vartalo_heikko.toString().plus("tte"))
                         stringBuilder.setSpan(
                             StyleSpan(BOLD),
                             stringBuilder.length-3, stringBuilder.length,
@@ -283,7 +302,7 @@ class Conjugator(verb: Verb) {
                         stringBuilder
                     }
                     Pronoun.HE -> {
-                        val stringBuilder = SpannableStringBuilder(_verb.vartalo.toString().plus(if(_verb.usePilkut()) "vät" else "vat"))
+                        val stringBuilder = SpannableStringBuilder(_verb.vartalo_heikko.toString().plus(if(_verb.usePilkut()) "vät" else "vat"))
                         stringBuilder.setSpan(
                             StyleSpan(BOLD),
                             stringBuilder.length-3, stringBuilder.length,
@@ -295,7 +314,7 @@ class Conjugator(verb: Verb) {
             3 -> {
                 return when(pronoun) {
                     Pronoun.MINA -> {
-                        val stringBuilder = SpannableStringBuilder(_verb.vartalo.toString().plus('n'))
+                        val stringBuilder = SpannableStringBuilder(_verb.vartalo_heikko.toString().plus('n'))
                         stringBuilder.setSpan(
                             StyleSpan(BOLD),
                             stringBuilder.length-1, stringBuilder.length,
@@ -304,7 +323,7 @@ class Conjugator(verb: Verb) {
 
                     }
                     Pronoun.SINA -> {
-                        val stringBuilder = SpannableStringBuilder(_verb.vartalo.toString().plus('t'))
+                        val stringBuilder = SpannableStringBuilder(_verb.vartalo_heikko.toString().plus('t'))
                         stringBuilder.setSpan(
                             StyleSpan(BOLD),
                             stringBuilder.length-1, stringBuilder.length,
@@ -313,7 +332,7 @@ class Conjugator(verb: Verb) {
 
                     }
                     Pronoun.HAN -> {
-                        val stringBuilder = SpannableStringBuilder(_verb.vartalo.toString().plus(_verb.vartalo.last()))
+                        val stringBuilder = SpannableStringBuilder(_verb.vartalo_heikko.toString().plus(_verb.vartalo_heikko.last()))
                         stringBuilder.setSpan(
                             StyleSpan(BOLD),
                             stringBuilder.length-1, stringBuilder.length,
@@ -322,7 +341,7 @@ class Conjugator(verb: Verb) {
 
                     }
                     Pronoun.ME -> {
-                        val stringBuilder = SpannableStringBuilder(_verb.vartalo.toString().plus("mme"))
+                        val stringBuilder = SpannableStringBuilder(_verb.vartalo_heikko.toString().plus("mme"))
                         stringBuilder.setSpan(
                             StyleSpan(BOLD),
                             stringBuilder.length-3, stringBuilder.length,
@@ -330,7 +349,7 @@ class Conjugator(verb: Verb) {
                         stringBuilder
                     }
                     Pronoun.TE -> {
-                        val stringBuilder = SpannableStringBuilder(_verb.vartalo.toString().plus("tte"))
+                        val stringBuilder = SpannableStringBuilder(_verb.vartalo_heikko.toString().plus("tte"))
                         stringBuilder.setSpan(
                             StyleSpan(BOLD),
                             stringBuilder.length-3, stringBuilder.length,
@@ -338,7 +357,7 @@ class Conjugator(verb: Verb) {
                         stringBuilder
                     }
                     Pronoun.HE -> {
-                        val stringBuilder = SpannableStringBuilder(_verb.vartalo.toString().plus(if(_verb.usePilkut()) "vät" else "vat"))
+                        val stringBuilder = SpannableStringBuilder(_verb.vartalo_heikko.toString().plus(if(_verb.usePilkut()) "vät" else "vat"))
                         stringBuilder.setSpan(
                             StyleSpan(BOLD),
                             stringBuilder.length-3, stringBuilder.length,
@@ -350,7 +369,7 @@ class Conjugator(verb: Verb) {
             4 -> {
                 return when(pronoun) {
                     Pronoun.MINA -> {
-                        val stringBuilder = SpannableStringBuilder(_verb.vartalo.toString().plus('n'))
+                        val stringBuilder = SpannableStringBuilder(_verb.vartalo_heikko.toString().plus('n'))
                         stringBuilder.setSpan(
                             StyleSpan(BOLD),
                             stringBuilder.length-1, stringBuilder.length,
@@ -359,7 +378,7 @@ class Conjugator(verb: Verb) {
 
                     }
                     Pronoun.SINA -> {
-                        val stringBuilder = SpannableStringBuilder(_verb.vartalo.toString().plus('t'))
+                        val stringBuilder = SpannableStringBuilder(_verb.vartalo_heikko.toString().plus('t'))
                         stringBuilder.setSpan(
                             StyleSpan(BOLD),
                             stringBuilder.length-1, stringBuilder.length,
@@ -368,12 +387,12 @@ class Conjugator(verb: Verb) {
 
                     }
                     Pronoun.HAN -> {
-                        val vartalo = _verb.vartalo.toString()
+                        val vartalo = _verb.vartalo_heikko.toString()
                         var stringBuilder: SpannableStringBuilder
                         if(vartalo[vartalo.lastIndex] == vartalo[vartalo.lastIndex-1]) {
                             stringBuilder = SpannableStringBuilder(vartalo)
                         } else {
-                            stringBuilder = SpannableStringBuilder(_verb.vartalo.toString().plus( _verb.vartalo.last()))
+                            stringBuilder = SpannableStringBuilder(_verb.vartalo_heikko.toString().plus( _verb.vartalo_heikko.last()))
                         }
                         stringBuilder.setSpan(
                             StyleSpan(BOLD),
@@ -383,7 +402,7 @@ class Conjugator(verb: Verb) {
 
                     }
                     Pronoun.ME -> {
-                        val stringBuilder = SpannableStringBuilder(_verb.vartalo.toString().plus("mme"))
+                        val stringBuilder = SpannableStringBuilder(_verb.vartalo_heikko.toString().plus("mme"))
                         stringBuilder.setSpan(
                             StyleSpan(BOLD),
                             stringBuilder.length-3, stringBuilder.length,
@@ -391,7 +410,7 @@ class Conjugator(verb: Verb) {
                         stringBuilder
                     }
                     Pronoun.TE -> {
-                        val stringBuilder = SpannableStringBuilder(_verb.vartalo.toString().plus("tte"))
+                        val stringBuilder = SpannableStringBuilder(_verb.vartalo_heikko.toString().plus("tte"))
                         stringBuilder.setSpan(
                             StyleSpan(BOLD),
                             stringBuilder.length-3, stringBuilder.length,
@@ -399,7 +418,7 @@ class Conjugator(verb: Verb) {
                         stringBuilder
                     }
                     Pronoun.HE -> {
-                        val stringBuilder = SpannableStringBuilder(_verb.vartalo.toString().plus(if(_verb.usePilkut()) "vät" else "vat"))
+                        val stringBuilder = SpannableStringBuilder(_verb.vartalo_heikko.toString().plus(if(_verb.usePilkut()) "vät" else "vat"))
                         stringBuilder.setSpan(
                             StyleSpan(BOLD),
                             stringBuilder.length-3, stringBuilder.length,
@@ -411,7 +430,7 @@ class Conjugator(verb: Verb) {
             5 -> {
                 return when(pronoun) {
                     Pronoun.MINA -> {
-                        val stringBuilder = SpannableStringBuilder(_verb.vartalo.toString().plus('n'))
+                        val stringBuilder = SpannableStringBuilder(_verb.vartalo_heikko.toString().plus('n'))
                         stringBuilder.setSpan(
                             StyleSpan(BOLD),
                             stringBuilder.length-1, stringBuilder.length,
@@ -420,7 +439,7 @@ class Conjugator(verb: Verb) {
 
                     }
                     Pronoun.SINA -> {
-                        val stringBuilder = SpannableStringBuilder(_verb.vartalo.toString().plus('t'))
+                        val stringBuilder = SpannableStringBuilder(_verb.vartalo_heikko.toString().plus('t'))
                         stringBuilder.setSpan(
                             StyleSpan(BOLD),
                             stringBuilder.length-1, stringBuilder.length,
@@ -429,7 +448,7 @@ class Conjugator(verb: Verb) {
 
                     }
                     Pronoun.HAN -> {
-                        val stringBuilder = SpannableStringBuilder(_verb.vartalo.toString().plus(_verb.vartalo.last()))
+                        val stringBuilder = SpannableStringBuilder(_verb.vartalo_heikko.toString().plus(_verb.vartalo_heikko.last()))
                         stringBuilder.setSpan(
                             StyleSpan(BOLD),
                             stringBuilder.length-1, stringBuilder.length,
@@ -438,7 +457,7 @@ class Conjugator(verb: Verb) {
 
                     }
                     Pronoun.ME -> {
-                        val stringBuilder = SpannableStringBuilder(_verb.vartalo.toString().plus("mme"))
+                        val stringBuilder = SpannableStringBuilder(_verb.vartalo_heikko.toString().plus("mme"))
                         stringBuilder.setSpan(
                             StyleSpan(BOLD),
                             stringBuilder.length-3, stringBuilder.length,
@@ -446,7 +465,7 @@ class Conjugator(verb: Verb) {
                         stringBuilder
                     }
                     Pronoun.TE -> {
-                        val stringBuilder = SpannableStringBuilder(_verb.vartalo.toString().plus("tte"))
+                        val stringBuilder = SpannableStringBuilder(_verb.vartalo_heikko.toString().plus("tte"))
                         stringBuilder.setSpan(
                             StyleSpan(BOLD),
                             stringBuilder.length-3, stringBuilder.length,
@@ -454,7 +473,7 @@ class Conjugator(verb: Verb) {
                         stringBuilder
                     }
                     Pronoun.HE -> {
-                        val stringBuilder = SpannableStringBuilder(_verb.vartalo.toString().plus(if(_verb.usePilkut()) "vät" else "vat"))
+                        val stringBuilder = SpannableStringBuilder(_verb.vartalo_heikko.toString().plus(if(_verb.usePilkut()) "vät" else "vat"))
                         stringBuilder.setSpan(
                             StyleSpan(BOLD),
                             stringBuilder.length-3, stringBuilder.length,
@@ -472,7 +491,8 @@ class Conjugator(verb: Verb) {
 
 class Verb(cursor: Cursor) {
     val aInfinitiivi: String
-    val vartalo: Spannable
+    val vartalo_vahva: Spannable
+    val vartalo_heikko: Spannable
     val verbityypi: Int
     val tenses: EnumMap<Tense, Array<Pair<Spannable, Boolean>>>
 
@@ -481,7 +501,9 @@ class Verb(cursor: Cursor) {
         aInfinitiivi = cursor.getString(2)
         verbityypi = cursor.getInt(1)
         val conjugator = Conjugator(this)
-        vartalo = if(cursor.getStringOrNull(3) != null) SpannableString(cursor.getStringOrNull(3)) else conjugator.conjugate(Tense.VARTALO)
+        val vartalo = if(cursor.getStringOrNull(3) != null) cursor.getString(3) else conjugator.conjugate(Tense.VARTALO).toString()
+        vartalo_vahva = SpannableString(applyKPT(vartalo, true))
+        vartalo_heikko = SpannableString(applyKPT(vartalo, false))
 
         tenses = EnumMap(Tense::class.java)
         tenses[Tense.PRESENT] = arrayOf(

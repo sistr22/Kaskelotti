@@ -22,5 +22,4 @@ licenses:
   - 'google-gdk-license-.+'
   - 'android-sdk-preview-license-.+'
 
-script:
-  ./gradlew testDebugUnitTest
+script: ./gradlew testDebugUnitTest

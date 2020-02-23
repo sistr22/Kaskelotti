@@ -22,7 +22,7 @@ class PresentFragment(verb: Verb) : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        text_view_vartalo.text = _verb.vartalo
+        text_view_vartalo.text = _verb.vartalo_heikko
 
         val pronounTextFields = arrayOf(
             text_view_mina,

@@ -16,6 +16,7 @@ class VerbKtTest {
     fun divideInSyllables() {
         val testWords = arrayOf(
             "kylä",
+            "soida",
             "Liisa",
             "seinä",
             "Matti",
@@ -26,10 +27,12 @@ class VerbKtTest {
             "kartta",
             "munkki",
             "ruskea",
-            "radio"
+            "radio",
+            "soi"
         )
         val expectedResults = arrayOf(
             arrayOf("ky", "lä"),
+            arrayOf("soi", "da"),
             arrayOf("Lii", "sa"),
             arrayOf("sei", "nä"),
             arrayOf("Mat", "ti"),
@@ -40,7 +43,8 @@ class VerbKtTest {
             arrayOf("kart", "ta"),
             arrayOf("munk", "ki"),
             arrayOf("rus", "ke", "a"),
-            arrayOf("ra", "di", "o")
+            arrayOf("ra", "di", "o"),
+            arrayOf("soi")
         )
         for(wordIdx in testWords.indices) {
             val res = divideInSyllables(testWords[wordIdx])
@@ -60,7 +64,7 @@ class VerbKtTest {
             "nuku"
         )
         for(idx in testWords.indices) {
-            val res = applyKPT(testWords[idx])
+            val res = applyKPT(testWords[idx], false)
             assert(res.contentEquals(expectedResults[idx])) {"Expected: ${expectedResults[idx]} received: $res"}
         }
     }
@@ -150,6 +154,19 @@ class VerbKtTest {
 
         val verb = Verb(mockedCursor)
         val expectedResults = arrayOf("teen", "teet", "tekee", "teemme", "teette", "tekevät")
+        for(i in expectedResults.indices) {
+            val tmp = verb.tenses[Tense.PRESENT]!![i].first.toString()
+            assert(tmp.compareTo(expectedResults[i]) == 0) { "Expected: ${expectedResults[i]} received: $tmp" }
+        }
+    }
+
+    @Test
+    fun verbNukkua() {
+        val mockedCursor = MatrixCursor(arrayOf("_id", "tyypi", "a_infinitiivi", "vartalo", "_id", "mina", "sina", "han", "me", "te", "he"))
+        mockedCursor.addRow(arrayOf("0", "1", "nukkua", null, 0, null, null, null, null, null, null))
+
+        val verb = Verb(mockedCursor)
+        val expectedResults = arrayOf("nukun", "nukut", "nukkuu", "nukumme", "nukutte", "nukkuvat")
         for(i in expectedResults.indices) {
             val tmp = verb.tenses[Tense.PRESENT]!![i].first.toString()
             assert(tmp.compareTo(expectedResults[i]) == 0) { "Expected: ${expectedResults[i]} received: $tmp" }
