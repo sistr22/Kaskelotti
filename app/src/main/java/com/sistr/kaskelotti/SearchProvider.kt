@@ -9,6 +9,8 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteQueryBuilder
 import android.net.Uri
 import android.util.Log
+import java.util.*
+import kotlin.collections.HashMap
 
 
 private val sUriMatcher = UriMatcher(UriMatcher.NO_MATCH).apply {
@@ -26,6 +28,13 @@ class SearchProvider : ContentProvider() {
         val dbHelper = DbHelper(context!!)
         db = dbHelper.readableDatabase
         return true
+    }
+
+    fun getTranslationTable(): String {
+        if (Locale.getDefault().language == Locale("fr").language) {
+            return "verbs_french"
+        }
+        return "verbs_english"
     }
 
 
@@ -58,13 +67,12 @@ class SearchProvider : ContentProvider() {
                     Log.d(TAG, "column [$i]: ${cursor.getColumnName(i)}")
                 }
                 return cursor
-                //return db.rawQuery("SELECT * FROM searchtable_fts WHERE searchtable_fts MATCH '${uri?.lastPathSegment}*';", null)
             }
             2 -> {  // If the incoming URI was for a single row
-                return db.rawQuery("SELECT * FROM searchtable WHERE _id = ${uri?.lastPathSegment};", null)
+                return db.rawQuery("SELECT * FROM verbs_infinitive WHERE _id = ${uri?.lastPathSegment};", null)
             }
             3 -> {  // If the incoming URI was for a single row
-                return db.rawQuery("SELECT * FROM verbs_infinitive LEFT JOIN verbs_present ON verbs_infinitive._id = verbs_present._id WHERE verbs_infinitive._id = ${uri?.lastPathSegment};", null)
+                return db.rawQuery("SELECT * FROM verbs_infinitive LEFT JOIN verbs_present ON verbs_infinitive._id = verbs_present._id LEFT JOIN ${getTranslationTable()} ON ${getTranslationTable()}._id = verbs_infinitive._id WHERE verbs_infinitive._id = ${uri?.lastPathSegment};", null)
             }
             else -> { // If the URI is not recognized
                 return null

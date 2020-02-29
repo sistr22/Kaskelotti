@@ -17,6 +17,7 @@ import kotlin.math.max
 class VerbFragment : Fragment() {
     private val _tag = "VerbFragment"
     private lateinit var _verb: Verb
+    private lateinit var _translation: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,7 +35,9 @@ class VerbFragment : Fragment() {
         {
             Log.d(_tag, "column [$i]: ${cursor.getColumnName(i)}")
         }
+        cursor.moveToFirst()
         _verb = Verb(cursor)
+        _translation = cursor.getString(13)
     }
 
     override fun onCreateView(
@@ -46,6 +49,7 @@ class VerbFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         title_verb.text = _verb.aInfinitiivi
+        verb_translation.text = _translation
         pager.adapter = ScreenSlidePagerAdapter(this)
         pager.offscreenPageLimit = 3
 
